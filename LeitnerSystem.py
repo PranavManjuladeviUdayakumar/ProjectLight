@@ -21,10 +21,10 @@ con.commit()
 today = str(datetime.today().strftime('%Y-%m-%d'))
 
 
-def insert(titles, category):
+def insert(topics, category):
     cur.execute(f"INSERT INTO Details VALUES('{category}', 'Daily', 0, '{today}')")
-    for title in titles:
-        cur.execute(f"INSERT INTO Topics VALUES('{title}', '{category}')")
+    for topic in topics:
+        cur.execute(f"INSERT INTO Topics VALUES('{topic.rstrip().lstrip()}', '{category}')")
     con.commit()
 
 
@@ -65,24 +65,30 @@ def overdue(lastrun, pattern):
 def CLI():
     
     mainstr = '''
-    Available Actions-
+Available Actions-
                 
-        1 - Input New Flashcards
-        2 - Remove Flashcard Category
-        3 - Practice 
-        4 - Exit
+    1 - Input New Flashcards
+    2 - Remove Flashcard Category
+    3 - Practice 
+    4 - Exit
 
-    Input Action Number: '''
+Input Action Number: '''
     while True:
 
         action = input(mainstr).strip()
 
         if action == '1':
-            print("Input")
+            
+            print("\nData Input Selected\n")
+            print("You will be asked to enter the category under which the topics fall under, and then the topics themselves. Enter the topics together, separated by a comma (,)\n")
+            category = input("Enter Category: ")
+            topics = input("Enter all topics: ").split(',')
+            insert(topics, category)
+
         elif action == '2':
             print("Remove")
         elif action == '3':
-            print("Remove")
+            print("Practice")
         elif action == '4':
             print("Exiting...")
             sys.exit()
@@ -93,8 +99,7 @@ def CLI():
 def GUI():
     print("GUI")
 
-
-print('''
+print(f'''
 ----------------------------------
                
         Project Light [CLI]
@@ -102,6 +107,7 @@ print('''
             -Pranav Udayakumar
 
 ----------------------------------
+©️2022-{datetime.now().year}
 ''')
 
 while True:
