@@ -12,13 +12,16 @@ patterns = {
     'Monthly':30
 }
 
+lst = list(patterns.keys())
+
 
 con = sqlite3.connect("Leitner.db")
 cur = con.cursor()
 cur.execute(f"CREATE TABLE IF NOT EXISTS Topics(Topic, Category)")
 cur.execute(f"CREATE TABLE IF NOT EXISTS Details(Category, Pattern, Streak, LastRun)")
 con.commit()
-today = str(datetime.today().strftime('%Y-%m-%d'))
+today = datetime.strptime(datetime.today().strftime("%Y-%m-%d"), "%Y-%m-%d") 
+
 
 
 def insert(topics, category):
@@ -29,7 +32,7 @@ def insert(topics, category):
 
 
 def update(category, pattern, streak=0):
-    cur.execute(f"UPDATE Details SET Category = '{category}', Pattern='{pattern}', Streak={streak}, LastRun = '{today}'")
+    cur.execute(f"UPDATE Details SET Category = '{category}', Pattern='{pattern}', Streak={streak}, LastRun = '{str(today)}'")
     con.commit()
 
 
@@ -48,7 +51,6 @@ def searchtopic(category):
 
 
 def higher(pattern):
-    lst = list(patterns.keys())
     if lst[-1] == pattern:
         return pattern
     else:
@@ -56,7 +58,6 @@ def higher(pattern):
     
 
 def lower(pattern):
-    lst = list(patterns.keys())
     if lst[0] == pattern or lst[1] == pattern:
         return lst[0]
     else:
@@ -64,16 +65,14 @@ def lower(pattern):
     
 
 def overdue(lastrun, pattern):
-    if (today - datetime.strptime(lastrun, "%Y-%m-%d")).days >= patterns[pattern]:
+    if (today - datetime.strptime(lastrun, "%Y-%m-%d %H:%M:%S")).days >= patterns[pattern]:
         return True
     else:
         return False
 
 
-def is_updateable(pattern, streak):
-    if patterns[pattern] <= streak:
-        return True
-    return False
+def is_updateable(streak):
+    return streak >= 3
 
 
 def proceed(message= "Do you wish to proceed: "):
@@ -108,7 +107,7 @@ Input Action Number: '''
 
             print("Review topics to be added-")
             for i in topics:
-                print(i.lstrip().rstrip(), category)
+                print(i.lstrip().rstrip(), ',', category)
             if proceed():
                 insert(topics, category)
             else:
@@ -168,7 +167,7 @@ Input Action Number: '''
                     category, pattern, streak = i
                     streak +=1
 
-                    if is_updateable(pattern, streak):
+                    if is_updateable(streak):
 
                         pattern = higher(pattern)
                         update(category, pattern)
@@ -190,6 +189,11 @@ Input Action Number: '''
             con.close()
             print("Exiting...")
             sys.exit()
+
+        elif action == '5':
+            print("Print all")
+            for i in searchtopic(input("Category: ")):
+                print(i)
 
         else:
 

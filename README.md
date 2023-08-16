@@ -7,7 +7,7 @@ You are legally not allowed to sell this app or any modifications of the same ma
 
 Link to GitHub page - https://github.com/PranavManjuladeviUdayakumar/ProjectLight
 
-If you plan to manually edit the database, the date is of the format yyyy-mm-dd
+If you plan to manually edit the database, the date is of the format (yyyy-mm-dd hh:mm:ss)
 
 Tutorial-
  #Todo
