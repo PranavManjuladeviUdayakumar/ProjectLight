@@ -20,7 +20,8 @@ cur = con.cursor()
 cur.execute(f"CREATE TABLE IF NOT EXISTS Topics(Topic, Category)")
 cur.execute(f"CREATE TABLE IF NOT EXISTS Details(Category, Pattern, Streak, LastRun)")
 con.commit()
-today = datetime.strptime(datetime.today().strftime("%Y-%m-%d"), "%Y-%m-%d %H:%M:%S") 
+today = datetime.strptime(datetime.today().strftime("%Y-%m-%d") + " 00:00:00", "%Y-%m-%d %H:%M:%S") 
+print(today)
 
 
 
