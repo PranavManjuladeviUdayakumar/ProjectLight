@@ -1,7 +1,9 @@
 import sqlite3
 import sys
 from datetime import datetime
-import tkinter as tk
+from tkinter import *
+import ctypes as ct
+
 
 
 patterns = {
@@ -14,15 +16,12 @@ patterns = {
 
 lst = list(patterns.keys())
 
-
 con = sqlite3.connect("Leitner.db")
 cur = con.cursor()
 cur.execute(f"CREATE TABLE IF NOT EXISTS Topics(Topic, Category)")
 cur.execute(f"CREATE TABLE IF NOT EXISTS Details(Category, Pattern, Streak, LastRun)")
 con.commit()
-today = datetime.strptime(datetime.today().strftime("%Y-%m-%d") + " 00:00:00", "%Y-%m-%d %H:%M:%S") 
-print(today)
-
+today = datetime.strptime(datetime.today().strftime("%Y-%m-%d") + " 00:00:00", "%Y-%m-%d %H:%M:%S")
 
 
 def insert(topics, category):
@@ -200,7 +199,27 @@ Input Action Number: '''
 
 
 def GUI():
-    raise NotImplementedError
+
+    root = Tk()
+    root.title("Project Light")
+    root.geometry('1920x1080')
+    root.update()
+
+    DWMWA_USE_IMMERSIVE_DARK_MODE = 20
+    set_window_attribute = ct.windll.dwmapi.DwmSetWindowAttribute
+    get_parent = ct.windll.user32.GetParent
+    hwnd = get_parent(root.winfo_id())
+    rendering_policy = DWMWA_USE_IMMERSIVE_DARK_MODE
+    value = 2
+    value = ct.c_int(value)
+    set_window_attribute(hwnd, rendering_policy, ct.byref(value), ct.sizeof(value))
+    root.configure(background='black')
+
+    a = Label(root, text ="Hello World")
+    a.pack()
+  
+    root.mainloop()
+
 
 #Main
 print(f'''
