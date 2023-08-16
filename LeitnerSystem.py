@@ -20,7 +20,7 @@ cur = con.cursor()
 cur.execute(f"CREATE TABLE IF NOT EXISTS Topics(Topic, Category)")
 cur.execute(f"CREATE TABLE IF NOT EXISTS Details(Category, Pattern, Streak, LastRun)")
 con.commit()
-today = datetime.strptime(datetime.today().strftime("%Y-%m-%d"), "%Y-%m-%d") 
+today = datetime.strptime(datetime.today().strftime("%Y-%m-%d"), "%Y-%m-%d %H:%M:%S") 
 
 
 
@@ -141,7 +141,7 @@ Input Action Number: '''
 
                     if overdue(lastrun, pattern):
 
-                        queue.add(category, pattern, streak)
+                        queue.add((category, pattern, streak))
                 
                 print("Categories processed!")
                 mistakequeue = set()
@@ -151,8 +151,8 @@ Input Action Number: '''
                     mistake = False
                     print(f"Category to be revised: {i[0]}")
 
-                    for i in searchtopic(i[0]):
-                        print("Topic: ", i[0])
+                    for x in searchtopic(i[0]):
+                        print("Topic: ", x[0])
                         if not proceed(message="Are you comfortable with this topic (y/n): "):
                             mistake = True
 
@@ -164,7 +164,8 @@ Input Action Number: '''
 
                 for i in (queue - mistakequeue):
 
-                    category, pattern, streak = i
+                    print(i)
+                    (category, pattern, streak)= i
                     streak +=1
 
                     if is_updateable(streak):
@@ -178,7 +179,8 @@ Input Action Number: '''
 
                 for i in mistakequeue:
 
-                    category, pattern, streak = i
+                    print("mistake", i)
+                    (category, pattern, streak) = i
                     pattern = lower(pattern)
 
                     update(category, pattern)
@@ -190,10 +192,6 @@ Input Action Number: '''
             print("Exiting...")
             sys.exit()
 
-        elif action == '5':
-            print("Print all")
-            for i in searchtopic(input("Category: ")):
-                print(i)
 
         else:
 
