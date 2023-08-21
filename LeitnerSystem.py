@@ -82,182 +82,117 @@ def proceed(message= "Do you wish to proceed: "):
     return False
 
 
-def CLI():
-    
-    mainstr = '''
+mainstr = '''
 Available Actions-
-                
-    1 - Input New Flashcards
-    2 - Remove Flashcard Category
-    3 - Practice 
-    4 - Exit
+            
+1 - Input New Flashcards
+2 - Remove Flashcard Category
+3 - Practice 
+4 - Exit
 
 Input Action Number: '''
-    
-    while True:
-
-        action = input(mainstr).strip()
-
-        if action == '1':
-            
-            print("\nData Input Selected\n")
-            print("You will be asked to enter the category under which the topics fall under, and then the topics themselves. \nEnter the topics together, separated by a comma (,)\n")
-            category = input("Enter Category: ")
-            topics = input("Enter all topics: ").split(',')
-
-            print("Review topics to be added-")
-            for i in topics:
-                print(i.lstrip().rstrip(), ',', category)
-            if proceed():
-                insert(topics, category)
-            else:
-                print("Action Aborted")
-
-        elif action == '2':
-            
-            print("\nData Removal Selected\n")
-            print("Enter the name of the category for whose data is to be deleted. NOTE: ALL records of a category will be removed.")
-            category = input("Category: ")
-
-            print("Review topics to be deleted-")
-            for i in searchtopic(input("Topic: ")):
-                print(i)
-            if proceed():
-                remove(category)
-            else:
-                print("Action Aborted")
-
-        elif action == '3':
-
-            print("\nPractice Mode\n")
-            print("You will be presented topics that are due for revision. \nDepending on your comfortability enter 'y' if you are sure of the topic, or 'n' if you aren't. \nThe more often a topic appears for you, the more revision you must do on the entire category. \nThe more comfortable you are with a category, the less it will appear for you.")
-            
-            if proceed():
-
-                print("Processing categories that need revision...")
-                queue = set()
-
-                for category, pattern, streak, lastrun in searchcategory():
-
-                    if overdue(lastrun, pattern):
-
-                        queue.add((category, pattern, streak))
-                
-                print("Categories processed!")
-                mistakequeue = set()
-
-                for i in queue:
-
-                    mistake = False
-                    print(f"Category to be revised: {i[0]}")
-
-                    for x in searchtopic(i[0]):
-                        print("Topic: ", x[0])
-                        if not proceed(message="Are you comfortable with this topic (y/n): "):
-                            mistake = True
-
-                    if mistake:
-                        mistakequeue.add(i)
-
-                print("All Categories Revised!")
-                print("Updating Frequency Charts...")
-
-                for i in (queue - mistakequeue):
-
-                    print(i)
-                    (category, pattern, streak)= i
-                    streak +=1
-
-                    if is_updateable(streak):
-
-                        pattern = higher(pattern)
-                        update(category, pattern)
-
-                    else:
-
-                        update(category, pattern, streak)
-
-                for i in mistakequeue:
-
-                    print("mistake", i)
-                    (category, pattern, streak) = i
-                    pattern = lower(pattern)
-
-                    update(category, pattern)
-
-
-        elif action == '4':
-
-            con.close()
-            print("Exiting...")
-            sys.exit()
-
-
-        else:
-
-            print("Invalid Usage. Enter Numbers from 1 - 4 only.")
-
-
-def GUI():
-
-    root = Tk()
-    root.title("Project Light")
-    root.geometry('1920x1080')
-    root.update()
-
-    DWMWA_USE_IMMERSIVE_DARK_MODE = 20
-    set_window_attribute = ct.windll.dwmapi.DwmSetWindowAttribute
-    get_parent = ct.windll.user32.GetParent
-    hwnd = get_parent(root.winfo_id())
-    rendering_policy = DWMWA_USE_IMMERSIVE_DARK_MODE
-    value = 2
-    value = ct.c_int(value)
-    set_window_attribute(hwnd, rendering_policy, ct.byref(value), ct.sizeof(value))
-    root.configure(background='black')
-
-    a = Label(root, text ="Hello World")
-    a.pack()
-  
-    root.mainloop()
-
-
-#Main
-print(f'''
-----------------------------------
-               
-        Project Light [CLI]
-               
-            -Pranav Udayakumar
-
-----------------------------------
-©️2022-{datetime.now().year}
-''')
 
 while True:
-    print('''Availabel Modes-
-    1 - CLI
-    2 - GUI
-    3 - Exit
-''')
-    action = input("Enter Mode: ").strip()
+
+    action = input(mainstr).strip()
 
     if action == '1':
+        
+        print("\nData Input Selected\n")
+        print("You will be asked to enter the category under which the topics fall under, and then the topics themselves. \nEnter the topics together, separated by a comma (,)\n")
+        category = input("Enter Category: ")
+        topics = input("Enter all topics: ").split(',')
 
-        CLI()
+        print("Review topics to be added-")
+        for i in topics:
+            print(i.lstrip().rstrip(), ',', category)
+        if proceed():
+            insert(topics, category)
+        else:
+            print("Action Aborted")
 
     elif action == '2':
+        
+        print("\nData Removal Selected\n")
+        print("Enter the name of the category for whose data is to be deleted. NOTE: ALL records of a category will be removed.")
+        category = input("Category: ")
 
-        GUI()
-        break
+        print("Review topics to be deleted-")
+        for i in searchtopic(input("Topic: ")):
+            print(i)
+        if proceed():
+            remove(category)
+        else:
+            print("Action Aborted")
 
     elif action == '3':
 
+        print("\nPractice Mode\n")
+        print("You will be presented topics that are due for revision. \nDepending on your comfortability enter 'y' if you are sure of the topic, or 'n' if you aren't. \nThe more often a topic appears for you, the more revision you must do on the entire category. \nThe more comfortable you are with a category, the less it will appear for you.")
+        
+        if proceed():
+
+            print("Processing categories that need revision...")
+            queue = set()
+
+            for category, pattern, streak, lastrun in searchcategory():
+
+                if overdue(lastrun, pattern):
+
+                    queue.add((category, pattern, streak))
+            
+            print("Categories processed!")
+            mistakequeue = set()
+
+            for i in queue:
+
+                mistake = False
+                print(f"Category to be revised: {i[0]}")
+
+                for x in searchtopic(i[0]):
+                    print("Topic: ", x[0])
+                    if not proceed(message="Are you comfortable with this topic (y/n): "):
+                        mistake = True
+
+                if mistake:
+                    mistakequeue.add(i)
+
+            print("All Categories Revised!")
+            print("Updating Frequency Charts...")
+
+            for i in (queue - mistakequeue):
+
+                print(i)
+                (category, pattern, streak)= i
+                streak +=1
+
+                if is_updateable(streak):
+
+                    pattern = higher(pattern)
+                    update(category, pattern)
+
+                else:
+
+                    update(category, pattern, streak)
+
+            for i in mistakequeue:
+
+                print("mistake", i)
+                (category, pattern, streak) = i
+                pattern = lower(pattern)
+
+                update(category, pattern)
+
+
+    elif action == '4':
+
         con.close()
-        print('Exiting...')
+        print("Exiting...")
         sys.exit()
+
 
     else:
 
-        print("Invalid Usage. Enter Numbers from 1-3 only")
+        print("Invalid Usage. Enter Numbers from 1 - 4 only.")
 
-    
+
