@@ -1,8 +1,7 @@
 import sqlite3
 import sys
 from datetime import datetime
-from tkinter import *
-import ctypes as ct
+
 
 
 
